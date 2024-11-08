@@ -1,0 +1,6 @@
+Flask==3.0.3
+flask-restx==1.3.0
+botocore=1.35.56
+jmespath=1.0.1
+pynamodb=6.0.1
+typing-extension=4.12.2
