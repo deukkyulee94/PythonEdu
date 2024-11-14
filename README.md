@@ -11,4 +11,13 @@ pip freeze > requirements.txt
 
 // requirement.txt파일로 관련된 종속성들을 설치
 pip install -r requirements.txt
+
+// Zappa 설치
+pip install zappa
+
+// Zappa 설정
+zappa_settings.json 파일 생성 후 정보 기재
+
+// Zappa 배포
+zappa deploy dev
 ```
