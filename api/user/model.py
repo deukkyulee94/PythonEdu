@@ -1,9 +1,7 @@
 from pynamodb.attributes import UnicodeAttribute
 from pynamodb.models import Model
-from werkzeug.security import check_password_hash
 
 
-# User 모델 정의
 class UserModel(Model):
     class Meta:
         table_name = 'user_model'
@@ -20,10 +18,6 @@ class UserModel(Model):
             'name': self.name,
             'email': self.email,
         }
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
 
 if not UserModel.exists():
     UserModel.create_table(read_capacity_units=1, write_capacity_units=1, wait=True)

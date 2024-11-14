@@ -1,8 +1,8 @@
 import datetime
 from http import HTTPStatus
 from api.user.model import UserModel
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from werkzeug.security import check_password_hash
+from flask_jwt_extended import create_access_token
 from flask import current_app
 
 
@@ -23,15 +23,15 @@ def creat_user(data):
         return {
             'status': HTTPStatus.CONFLICT,
             'message': '회원가입 실패, 이미 존재하는 유저입니다.',
-            'data': ''
+            'data': None
         }
     # 조회한 유저가 None이면 회원 생성
     else:
         new_user = UserModel(
-            user_id=data.get('user_id'),
-            name=data.get('name'),
-            email=data.get('email'),
-            password=generate_password_hash(data.get('password')),
+            user_id = data.get('user_id'),
+            name = data.get('name'),
+            email = data.get('email'),
+            password = data.get('password'),
         )
 
         # 유저 저장
@@ -51,7 +51,7 @@ def login_user(data):  # 로그인 서비스
     selected_user = next(iter(UserModel.query(data.get('user_id'))), None)
     print(f'[service] :: login_user - selected_user: {selected_user}')
 
-    is_valid = check_password_hash(selected_user.password, data.get('password'))
+    is_valid = selected_user.password == data.get('password')
     print(f'[service] :: login_user - is_valid: {is_valid}')
 
     if is_valid:
