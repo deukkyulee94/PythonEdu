@@ -1,8 +1,9 @@
+from flask_jwt_extended import jwt_required
 from flask_restx import Resource
 
 from api.user import user_api, user_register_model, user_update_model, user_delete_model, user_login_model, \
     response_model
-from api.user.service import creat_user, login_user, update_user, get_user, delete_user
+from api.user.service import creat_user, login_user, update_user, get_user, delete_user, clear_data
 
 
 @user_api.route('/register')
@@ -24,16 +25,27 @@ class Login(Resource):
 @user_api.route('/<user_id>')
 class UserId(Resource):
 
+    @jwt_required()
     @user_api.marshal_with(response_model)
     def get(self, user_id=None):  # 유저 조회
         return get_user(user_id)
 
+    #Bearer
+    @jwt_required()
     @user_api.expect(user_update_model)
     @user_api.marshal_with(response_model)
     def put(self, user_id=None):  # 유저 수정
         return update_user(user_id, user_api.payload)
 
+    @jwt_required()
     @user_api.expect(user_delete_model)
     @user_api.marshal_with(response_model)
     def delete(self, user_id=None):  # 유저 삭제
         return delete_user(user_id, user_api.payload)
+
+
+@user_api.route('/clear-data')
+class User(Resource):
+    @user_api.marshal_with(response_model)
+    def delete(self):
+        return clear_data()

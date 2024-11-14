@@ -51,6 +51,13 @@ def login_user(data):  # 로그인 서비스
     selected_user = next(iter(UserModel.query(data.get('user_id'))), None)
     print(f'[service] :: login_user - selected_user: {selected_user}')
 
+    if selected_user is None:
+        return {
+            'status': HTTPStatus.NOT_FOUND,
+            'message': '로그인 실패, 아이디나 비밀번호를 확인해주세요.',
+            'data': None
+        }
+
     is_valid = check_password_hash(selected_user.password, data.get('password'))
     print(f'[service] :: login_user - is_valid: {is_valid}')
 
@@ -62,11 +69,10 @@ def login_user(data):  # 로그인 서비스
             'message': '로그인 성공',
             'data': {'token': access_token}
         }
-
     else:
         return {
             'status': HTTPStatus.UNAUTHORIZED,
-            'message': '로그인 실패',
+            'message': '로그인 실패, 아이디나 비밀번호를 확인해주세요.',
             'data': None
         }
 
@@ -93,6 +99,15 @@ def get_user(user_id):
 
 def update_user(user_id, data):
     print(f'[service] :: update_user - user_id: {user_id} | data: {data}')
+
+    jwt_identify = get_jwt_identity()
+
+    if jwt_identify != user_id:
+        return {
+            'status': HTTPStatus.UNAUTHORIZED,
+            'message': '잘못된 토큰입니다.',
+            'data': None
+        }
 
     selected_user = next(iter(UserModel.query(user_id)), None)
     print(f'[service] :: update_user - selected_user: {selected_user}')
@@ -139,5 +154,23 @@ def delete_user(user_id, data):
         return {
             'status': HTTPStatus.UNAUTHORIZED,
             'message': '유저 삭제 실패, 비밀번호가 일치하지 않습니다.',
+            'data': None
+        }
+
+
+def clear_data():
+    user = next(iter(UserModel.scan()), None)
+
+    if user is not None:
+        user.delete()
+        return {
+            'status': HTTPStatus.OK,
+            'message': '유저 정보가 삭제되었습니다.',
+            'data': None
+        }
+    else:
+        return {
+            'status': HTTPStatus.OK,
+            'message': '삭제할 데이터가 없습니다.',
             'data': None
         }
