@@ -4,14 +4,13 @@ from pynamodb.models import Model
 
 class TodoModel(Model):
     class Meta:
-        table_name = 'user_model'
+        table_name = 'todo_model'
         region = "ap-northeast-2"
 
     todo_id = UnicodeAttribute(hash_key=True)
-    user_id = UnicodeAttribute(range_key=True)
+    user_id = UnicodeAttribute()
     todo = UnicodeAttribute()
     done = BooleanAttribute(default=False)
-
 
     def to_dict(self):
         return {
@@ -20,6 +19,7 @@ class TodoModel(Model):
             'todo': self.todo,
             'done': self.done,
         }
+
 
 if not TodoModel.exists():
     TodoModel.create_table(read_capacity_units=1, write_capacity_units=1, wait=True)

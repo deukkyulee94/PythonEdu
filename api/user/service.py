@@ -1,7 +1,6 @@
 import datetime
 from http import HTTPStatus
 from api.user.model import UserModel
-from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import current_app
 
@@ -67,7 +66,7 @@ def login_user(data):  # 로그인 서비스
         return {
             'status': HTTPStatus.OK,
             'message': '로그인 성공',
-            'data': {'token': access_token}
+            'data': {'token': 'Bearer ' + access_token}
         }
 
     else:
@@ -140,7 +139,7 @@ def delete_user(user_id, data):
     selected_user = next(iter(UserModel.query(user_id)), None)
     print(f'[service] :: login_user - selected_user: {selected_user}')
 
-    is_valid = check_password_hash(selected_user.password, data.get('password'))
+    is_valid = selected_user.password == data.get('password')
     print(f'[service] :: login_user - is_valid: {is_valid}')
 
     if is_valid:

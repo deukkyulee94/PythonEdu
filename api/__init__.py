@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restx import Api
 from api.user import controllers, user_api
+from api.todo import controllers, todo_api
 from flask_jwt_extended import JWTManager
 
 def create_app():
@@ -27,6 +28,7 @@ def create_app():
               description='Flask-Restx를 이용한 백엔드 API')
 
     api.add_namespace(user_api)
+    api.add_namespace(todo_api)
 
     # JWT 설정
     jwt = JWTManager()
